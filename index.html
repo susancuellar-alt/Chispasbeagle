@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beagle World | Chispas & Amigos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F9F4EC;
+    --warm-white: #FFFDF9;
+    --amber: #C8860A;
+    --amber-light: #E8A020;
+    --amber-pale: #FFF3D6;
+    --brown: #5C3A1E;
+    --brown-mid: #8B5E3C;
+    --brown-light: #C4956A;
+    --charcoal: #2C2018;
+    --text: #3D2B1A;
+    --text-muted: #7A6050;
+    --white: #FFFFFF;
+    --shadow: rgba(92, 58, 30, 0.15);
+    --shadow-deep: rgba(44, 32, 24, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+
+  /* HEADER */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+    height: 70px; background: rgba(249,244,236,0.94); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(200,134,10,0.15); transition: box-shadow 0.3s;
+  }
+  header.scrolled { box-shadow: 0 4px 30px var(--shadow); }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; }
+  .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+  .logo-text { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.4rem; color: var(--brown); }
+  .logo-text span { color: var(--amber); }
+  nav { display: flex; gap: 2rem; }
+  nav a { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
+  nav a::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--amber); transform: scaleX(0); transition: transform 0.3s; }
+  nav a:hover { color: var(--brown); }
+  nav a:hover::after { transform: scaleX(1); }
+  .nav-cta { background: var(--amber) !important; color: var(--white) !important; padding: 0.5rem 1.2rem; border-radius: 100px; font-weight: 600 !important; }
+  .nav-cta::after { display: none !important; }
+  .nav-cta:hover { background: var(--brown) !important; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--brown); border-radius: 2px; transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-nav { display: none; position: fixed; top: 70px; left: 0; right: 0; background: var(--warm-white); border-bottom: 2px solid var(--amber); padding: 1.5rem 5%; flex-direction: column; gap: 1rem; z-index: 99; box-shadow: 0 10px 40px var(--shadow); }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav a { text-decoration: none; color: var(--text); font-size: 1.1rem; font-weight: 500; padding: 0.7rem 0; border-bottom: 1px solid rgba(200,134,10,0.15); }
+
+  /* HERO */
+  .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 100px 5% 60px; gap: 4rem; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -100px; right: -200px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(200,134,10,0.12) 0%, transparent 70%); pointer-events: none; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--amber-pale); border: 1px solid rgba(200,134,10,0.3); color: var(--amber); font-size: 0.8rem; font-weight: 600; padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.5rem; animation: fadeUp 0.8s ease both; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem,5vw,4.5rem); line-height: 1.08; font-weight: 900; color: var(--brown); margin-bottom: 1.5rem; animation: fadeUp 0.8s 0.1s ease both; }
+  .hero-title em { font-style: italic; color: var(--amber); }
+  .hero-desc { font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); max-width: 480px; margin-bottom: 2.5rem; animation: fadeUp 0.8s 0.2s ease both; }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.8s 0.3s ease both; }
+  .btn-primary { background: var(--amber); color: var(--white); padding: 0.85rem 2rem; border-radius: 100px; font-weight: 600; font-size: 0.95rem; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+  .btn-primary:hover { background: var(--brown); transform: translateY(-2px); box-shadow: 0 8px 25px var(--shadow-deep); }
+  .btn-secondary { background: transparent; color: var(--brown); padding: 0.85rem 2rem; border-radius: 100px; font-weight: 600; font-size: 0.95rem; text-decoration: none; border: 2px solid var(--brown-light); cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+  .btn-secondary:hover { border-color: var(--brown); background: var(--brown); color: var(--white); }
+  .hero-stats { display: flex; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(200,134,10,0.2); animation: fadeUp 0.8s 0.4s ease both; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--amber); line-height: 1; }
+  .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+  .hero-visual { position: relative; animation: fadeUp 0.8s 0.2s ease both; }
+  .hero-img-wrap { position: relative; border-radius: 30px 30px 150px 30px; overflow: hidden; aspect-ratio: 4/5; box-shadow: 0 30px 80px var(--shadow-deep); }
+  .hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+  .hero-img-wrap:hover img { transform: scale(1.04); }
+  .hero-img-wrap::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(92,58,30,0.35)); z-index: 1; pointer-events: none; }
+  .chispas-ribbon { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 2; background: var(--amber); color: var(--white); font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1rem; padding: 0.6rem 1.6rem; border-radius: 100px; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+  .hero-float-card { position: absolute; background: var(--white); border-radius: 16px; padding: 1rem 1.2rem; box-shadow: 0 10px 30px var(--shadow-deep); display: flex; align-items: center; gap: 0.7rem; z-index: 3; }
+  .hero-float-card.card-2 { top: 2rem; right: -2rem; }
+  .fc-icon { font-size: 1.8rem; }
+  .fc-label { font-size: 0.7rem; color: var(--text-muted); }
+  .fc-value { font-weight: 700; font-size: 0.95rem; color: var(--brown); }
+
+  /* CHISPAS */
+  .chispas-section { padding: 90px 5%; background: linear-gradient(135deg, var(--amber-pale) 0%, var(--cream) 100%); border-top: 3px solid var(--amber); }
+  .chispas-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; max-width: 1100px; margin: 0 auto; }
+  .chispas-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .chispas-gallery img { width: 100%; border-radius: 16px; object-fit: cover; box-shadow: 0 8px 25px var(--shadow); transition: transform 0.3s, box-shadow 0.3s; }
+  .chispas-gallery img:hover { transform: scale(1.03); box-shadow: 0 15px 40px var(--shadow-deep); }
+  .chispas-gallery img:first-child { grid-column: 1/-1; height: 260px; }
+  .chispas-gallery img:not(:first-child) { height: 180px; }
+  .chispas-star-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--amber); color: var(--white); font-size: 0.75rem; font-weight: 700; padding: 0.4rem 1rem; border-radius: 100px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.2rem; }
+  .chispas-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem,3.5vw,3.2rem); font-weight: 900; color: var(--brown); line-height: 1.1; margin-bottom: 1rem; }
+  .chispas-title em { font-style: italic; color: var(--amber); }
+  .chispas-desc { font-size: 1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 1.2rem; }
+  .chispas-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 2rem; }
+  .fact-pill { display: flex; align-items: center; gap: 0.7rem; background: var(--white); border-radius: 12px; padding: 0.7rem 1rem; border: 1px solid rgba(200,134,10,0.2); font-size: 0.85rem; font-weight: 500; color: var(--brown); }
+  .fact-pill span { font-size: 1.2rem; }
+
+  /* RAZAS */
+  .razas { padding: 100px 5%; background: var(--warm-white); }
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-tag { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 1rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem,3.5vw,3rem); font-weight: 900; color: var(--brown); line-height: 1.15; }
+  .section-title em { font-style: italic; color: var(--amber); }
+  .section-desc { color: var(--text-muted); max-width: 500px; margin: 1rem auto 0; line-height: 1.7; }
+  .razas-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 2rem; }
+  .raza-card { background: var(--cream); border-radius: 20px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; border: 1px solid rgba(200,134,10,0.1); }
+  .raza-card:hover { transform: translateY(-8px); box-shadow: 0 25px 60px var(--shadow); }
+  .raza-img { height: 210px; overflow: hidden; position: relative; }
+  .raza-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+  .raza-card:hover .raza-img img { transform: scale(1.06); }
+  .raza-badge { position: absolute; top: 1rem; right: 1rem; background: var(--amber); color: var(--white); font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.7rem; border-radius: 100px; z-index: 1; }
+  .raza-body { padding: 1.5rem; }
+  .raza-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--brown); margin-bottom: 0.4rem; }
+  .raza-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+  .raza-traits { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .trait { font-size: 0.72rem; font-weight: 600; padding: 0.25rem 0.7rem; border-radius: 100px; background: var(--amber-pale); color: var(--amber); border: 1px solid rgba(200,134,10,0.2); }
+
+  /* SERVICIOS */
+  .servicios { padding: 100px 5%; background: var(--cream); }
+  .servicios-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; }
+  .servicio-card { background: var(--warm-white); border-radius: 20px; overflow: hidden; border: 1px solid rgba(200,134,10,0.12); transition: all 0.3s; position: relative; }
+  .servicio-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--amber); transform: scaleX(0); transition: transform 0.3s; transform-origin: left; }
+  .servicio-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px var(--shadow); }
+  .servicio-card:hover::after { transform: scaleX(1); }
+  .s-img { width: 100%; height: 180px; overflow: hidden; }
+  .s-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .servicio-card:hover .s-img img { transform: scale(1.06); }
+  .s-body { padding: 1.5rem; }
+  .s-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--brown); margin-bottom: 0.6rem; }
+  .s-desc { font-size: 0.87rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem; }
+  .s-price { font-size: 1.3rem; font-weight: 700; color: var(--amber); font-family: 'Playfair Display', serif; }
+  .s-price span { font-size: 0.8rem; font-weight: 400; color: var(--text-muted); }
+
+  /* ABOUT */
+  .about { padding: 100px 5%; background: var(--brown); color: var(--white); display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; position: relative; overflow: hidden; }
+  .about-bg-overlay { position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=1400&auto=format&fit=crop&q=30') center/cover no-repeat; opacity: 0.07; pointer-events: none; }
+  .about-section-tag { color: var(--amber-light); }
+  .about .section-title { color: var(--white); text-align: left; }
+  .about .section-title em { color: var(--amber-light); }
+  .about-text { font-size: 1rem; line-height: 1.8; color: rgba(255,255,255,0.75); margin: 1.2rem 0; }
+  .about-list { list-style: none; margin: 1.5rem 0 2rem; }
+  .about-list li { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.95rem; color: rgba(255,255,255,0.85); }
+  .about-list li::before { content: '✦'; color: var(--amber-light); font-size: 0.8rem; flex-shrink: 0; }
+  .about-photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .about-photo-grid img { width: 100%; border-radius: 16px; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: transform 0.3s; }
+  .about-photo-grid img:hover { transform: scale(1.02); }
+  .about-photo-grid img:first-child { grid-column: 1/-1; height: 220px; }
+  .about-photo-grid img:not(:first-child) { height: 155px; }
+
+  /* TESTIMONIOS */
+  .testimonios { padding: 100px 5%; background: var(--amber-pale); }
+  .test-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .test-card { background: var(--white); border-radius: 20px; padding: 2rem; box-shadow: 0 5px 20px var(--shadow); position: relative; transition: transform 0.3s; }
+  .test-card:hover { transform: translateY(-5px); }
+  .test-card::before { content: '"'; position: absolute; top: -1rem; left: 1.5rem; font-family: 'Playfair Display', serif; font-size: 5rem; color: var(--amber); line-height: 1; }
+  .test-text { font-size: 0.92rem; line-height: 1.7; color: var(--text-muted); margin: 1rem 0 1.5rem; }
+  .test-footer { display: flex; align-items: center; gap: 1rem; }
+  .test-avatar { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; border: 2px solid var(--amber); flex-shrink: 0; }
+  .test-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .test-name { font-weight: 700; font-size: 0.9rem; color: var(--brown); }
+  .test-role { font-size: 0.75rem; color: var(--text-muted); }
+  .stars { color: var(--amber); font-size: 0.85rem; margin-bottom: 0.2rem; }
+
+  /* CONTACTO */
+  .contacto { padding: 100px 5%; background: var(--warm-white); display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .contact-info-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; color: var(--brown); line-height: 1.2; margin-bottom: 1rem; }
+  .contact-info-desc { color: var(--text-muted); line-height: 1.7; margin-bottom: 2rem; }
+  .contact-items { display: flex; flex-direction: column; gap: 1.2rem; }
+  .contact-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; background: var(--cream); border-radius: 14px; border: 1px solid rgba(200,134,10,0.12); transition: border-color 0.2s; }
+  .contact-item:hover { border-color: var(--amber); }
+  .ci-icon { width: 42px; height: 42px; background: var(--amber); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .ci-label { font-size: 0.75rem; color: var(--text-muted); }
+  .ci-value { font-weight: 600; font-size: 0.9rem; color: var(--brown); }
+  .form-wrap { background: var(--white); border-radius: 24px; padding: 2.5rem; box-shadow: 0 15px 50px var(--shadow); border: 1px solid rgba(200,134,10,0.12); }
+  .form-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--brown); margin-bottom: 1.5rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.2rem; }
+  label { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+  input, select, textarea { padding: 0.75rem 1rem; border: 1.5px solid rgba(200,134,10,0.2); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--cream); transition: border-color 0.2s, box-shadow 0.2s; outline: none; width: 100%; }
+  input:focus, select:focus, textarea:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(200,134,10,0.12); background: var(--white); }
+  textarea { resize: vertical; min-height: 110px; }
+  .form-submit { width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px; }
+  .form-success { display: none; text-align: center; padding: 2rem; color: var(--amber); font-size: 1.05rem; font-weight: 600; }
+  .form-success .success-icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+
+  /* FOOTER */
+  footer { background: var(--charcoal); color: rgba(255,255,255,0.7); padding: 60px 5% 30px; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .footer-desc { font-size: 0.88rem; line-height: 1.7; margin: 1rem 0 1.5rem; color: rgba(255,255,255,0.55); }
+  .social-links { display: flex; gap: 0.8rem; }
+  .social-link { width: 38px; height: 38px; background: rgba(255,255,255,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.1rem; transition: background 0.2s, transform 0.2s; }
+  .social-link:hover { background: var(--amber); transform: translateY(-2px); }
+  .footer-col h4 { color: var(--white); font-size: 0.9rem; font-weight: 700; margin-bottom: 1.2rem; }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.7rem; }
+  .footer-col a { text-decoration: none; color: rgba(255,255,255,0.55); font-size: 0.85rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--amber-light); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; color: rgba(255,255,255,0.35); flex-wrap: wrap; gap: 1rem; }
+
+  /* SCROLL TOP */
+  .scroll-top { position: fixed; bottom: 2rem; right: 2rem; width: 48px; height: 48px; background: var(--amber); color: var(--white); border: none; border-radius: 50%; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 20px var(--shadow-deep); transition: all 0.3s; opacity: 0; pointer-events: none; z-index: 50; }
+  .scroll-top.visible { opacity: 1; pointer-events: all; }
+  .scroll-top:hover { background: var(--brown); transform: translateY(-3px); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(25px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+    .hamburger { display: flex; }
+    .hero { grid-template-columns: 1fr; text-align: center; padding-top: 90px; }
+    .hero-visual { order: -1; max-width: 350px; margin: 0 auto; }
+    .hero-desc { margin: 0 auto 2.5rem; }
+    .hero-actions { justify-content: center; }
+    .hero-stats { justify-content: center; }
+    .chispas-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .about { grid-template-columns: 1fr; gap: 3rem; }
+    .contacto { grid-template-columns: 1fr; gap: 3rem; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  }
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    .hero-float-card { display: none; }
+    .hero-stats { gap: 1.5rem; }
+    .chispas-facts { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <a href="#inicio" class="logo">
+    <div class="logo-icon">
+      <img src="https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=80&auto=format&fit=crop" alt="logo">
+    </div>
+    <div class="logo-text">Beagle<span>World</span></div>
+  </a>
+  <nav>
+    <a href="#chispas">⭐ Chispas</a>
+    <a href="#razas">Razas</a>
+    <a href="#servicios">Servicios</a>
+    <a href="#nosotros">Nosotros</a>
+    <a href="#contacto" class="nav-cta">Contáctanos</a>
+  </nav>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</header>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#chispas"   onclick="closeMobileNav()">⭐ Chispas</a>
+  <a href="#razas"     onclick="closeMobileNav()">🐾 Razas</a>
+  <a href="#servicios" onclick="closeMobileNav()">🛁 Servicios</a>
+  <a href="#nosotros"  onclick="closeMobileNav()">❤️ Nosotros</a>
+  <a href="#contacto"  onclick="closeMobileNav()">📬 Contacto</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div>
+    <div class="hero-badge">🏆 &nbsp;Criadero Certificado desde 2010</div>
+    <h1 class="hero-title">Encuentra tu<br>compañero <em>ideal</em><br>a cuatro patas</h1>
+    <p class="hero-desc">Apasionados por los beagles y otras razas increíbles. Criamos con amor, salud y dedicación para que cada cachorro llegue a su nuevo hogar feliz y saludable.</p>
+    <div class="hero-actions">
+      <a href="#chispas" class="btn-primary">Conoce a Chispas ⭐</a>
+      <a href="#contacto" class="btn-secondary">Consultar ↗</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">500+</div><div class="stat-label">Cachorros adoptados</div></div>
+      <div><div class="stat-num">14</div><div class="stat-label">Años de experiencia</div></div>
+      <div><div class="stat-num">6</div><div class="stat-label">Razas disponibles</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-wrap">
+      <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&auto=format&fit=crop" alt="Chispas el beagle">
+      <div class="chispas-ribbon">⭐ Presentando a Chispas</div>
+      <div class="hero-float-card card-2">
+        <span class="fc-icon">💉</span>
+        <div><div class="fc-label">Salud garantizada</div><div class="fc-value">Vacunas al día</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHISPAS -->
+<section class="chispas-section" id="chispas">
+  <div class="chispas-inner">
+    <div class="chispas-gallery reveal">
+      <img src="https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=900&auto=format&fit=crop" alt="Chispas posando">
+      <img src="https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=500&auto=format&fit=crop" alt="Chispas de cerca">
+      <img src="https://images.unsplash.com/photo-1568572933382-74d440642117?w=500&auto=format&fit=crop" alt="Chispas jugando">
+    </div>
+    <div class="reveal">
+      <div class="chispas-star-badge">⭐ Mascota Estrella</div>
+      <h2 class="chispas-title">Hola, soy<br><em>Chispas</em> 🐾</h2>
+      <p class="chispas-desc">Chispas es nuestra beagle más querida y la embajadora oficial de BeagleWorld. Con su mirada tierna y su energía inagotable, ha conquistado el corazón de todos los que la conocen.</p>
+      <p class="chispas-desc">Nació aquí en nuestro criadero y desde entonces acompaña a las familias en el proceso de elegir a su nuevo miembro. ¡Nadie mejor para presentar a sus "hermanos"!</p>
+      <div class="chispas-facts">
+        <div class="fact-pill"><span>🎂</span> 4 años de edad</div>
+        <div class="fact-pill"><span>📏</span> 14 kg · Talla M</div>
+        <div class="fact-pill"><span>🏅</span> Pedigrí Kennel Club</div>
+        <div class="fact-pill"><span>🎓</span> Obediencia avanzada</div>
+        <div class="fact-pill"><span>❤️</span> Ama a los niños</div>
+        <div class="fact-pill"><span>🌟</span> Premio mejor raza 2023</div>
+      </div>
+      <a href="#contacto" class="btn-primary">Quiero conocer a Chispas →</a>
+    </div>
+  </div>
+</section>
+
+<!-- RAZAS -->
+<section class="razas" id="razas">
+  <div class="section-header reveal">
+    <div class="section-tag">Nuestras Razas</div>
+    <h2 class="section-title">Amor en todas las <em>formas</em></h2>
+    <p class="section-desc">Cada raza tiene su personalidad única. Encuentra la que mejor se adapte a tu estilo de vida.</p>
+  </div>
+  <div class="razas-grid">
+    <div class="raza-card reveal">
+      <div class="raza-img">
+        <img src="https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=600&auto=format&fit=crop" alt="Beagle">
+        <div class="raza-badge">⭐ Como Chispas</div>
+      </div>
+      <div class="raza-body">
+        <div class="raza-name">Beagle</div>
+        <p class="raza-desc">Curioso, amigable y lleno de energía. El compañero perfecto para familias activas con niños.</p>
+        <div class="raza-traits"><span class="trait">Juguetón</span><span class="trait">Familiar</span><span class="trait">Inteligente</span></div>
+      </div>
+    </div>
+    <div class="raza-card reveal">
+      <div class="raza-img">
+        <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&auto=format&fit=crop" alt="Labrador Retriever">
+      </div>
+      <div class="raza-body">
+        <div class="raza-name">Labrador Retriever</div>
+        <p class="raza-desc">Leal, gentil y fácil de entrenar. Ideal para familias de todos los tamaños y estilos de vida.</p>
+        <div class="raza-traits"><span class="trait">Dócil</span><span class="trait">Cariñoso</span><span class="trait">Activo</span></div>
+      </div>
+    </div>
+    <div class="raza-card reveal">
+      <div class="raza-img">
+        <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&auto=format&fit=crop" alt="Golden Retriever">
+      </div>
+      <div class="raza-body">
+        <div class="raza-name">Golden Retriever</div>
+        <p class="raza-desc">Paciente, confiable y extremadamente cariñoso. Excelente con niños y otros animales.</p>
+        <div class="raza-traits"><span class="trait">Gentil</span><span class="trait">Sociable</span><span class="trait">Fiel</span></div>
+      </div>
+    </div>
+    <div class="raza-card reveal">
+      <div class="raza-img">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop" alt="Dálmata">
+        <div class="raza-badge">Nuevo</div>
+      </div>
+      <div class="raza-body">
+        <div class="raza-name">Dálmata</div>
+        <p class="raza-desc">Enérgico, elegante y único. Necesita actividad física pero es un guardián excelente.</p>
+        <div class="raza-traits"><span class="trait">Enérgico</span><span class="trait">Guardián</span><span class="trait">Único</span></div>
+      </div>
+    </div>
+    <div class="raza-card reveal">
+      <div class="raza-img">
+        <img src="https://images.unsplash.com/photo-1583511655826-05700d52f4d9?w=600&auto=format&fit=crop" alt="Bulldog Inglés">
+      </div>
+      <div class="raza-body">
+        <div class="raza-name">Bulldog Inglés</div>
+        <p class="raza-desc">Tranquilo, amable y con mucha personalidad. Perfecto para hogares más relajados.</p>
+        <div class="raza-traits"><span class="trait">Tranquilo</span><span class="trait">Leal</span><span class="trait">Gracioso</span></div>
+      </div>
+    </div>
+    <div class="raza-card reveal">
+      <div class="raza-img">
+        <img src="https://images.unsplash.com/photo-1503256207526-0d5d80fa2f47?w=600&auto=format&fit=crop" alt="Border Collie">
+      </div>
+      <div class="raza-body">
+        <div class="raza-name">Border Collie</div>
+        <p class="raza-desc">El más inteligente de todos. Necesita estimulación mental y física constante para ser feliz.</p>
+        <div class="raza-traits"><span class="trait">Genial</span><span class="trait">Ágil</span><span class="trait">Obediente</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section class="servicios" id="servicios">
+  <div class="section-header reveal">
+    <div class="section-tag">Lo que ofrecemos</div>
+    <h2 class="section-title">Servicios para tu <em>mejor amigo</em></h2>
+    <p class="section-desc">Desde la adopción hasta el cuidado continuo, estamos aquí en cada paso del camino.</p>
+  </div>
+  <div class="servicios-grid">
+    <div class="servicio-card reveal">
+      <div class="s-img"><img src="https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=600&auto=format&fit=crop" alt="Adopción"></div>
+      <div class="s-body">
+        <div class="s-title">Adopción de Cachorros</div>
+        <p class="s-desc">Cachorros con pedigrí, vacunas al día, desparasitados y con certificado veterinario. Garantía de 30 días incluida.</p>
+        <div class="s-price">Desde $800 <span>/ cachorro</span></div>
+      </div>
+    </div>
+    <div class="servicio-card reveal">
+      <div class="s-img"><img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&auto=format&fit=crop" alt="Peluquería"></div>
+      <div class="s-body">
+        <div class="s-title">Peluquería Canina</div>
+        <p class="s-desc">Baño, corte de pelo, limpieza de oídos y corte de uñas con productos premium y manos expertas.</p>
+        <div class="s-price">Desde $45 <span>/ sesión</span></div>
+      </div>
+    </div>
+    <div class="servicio-card reveal">
+      <div class="s-img"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop" alt="Guardería"></div>
+      <div class="s-body">
+        <div class="s-title">Guardería & Hotel</div>
+        <p class="s-desc">Tu mascota en buenas manos mientras viajas. Amplias instalaciones, juego grupal y reportes diarios por WhatsApp.</p>
+        <div class="s-price">Desde $25 <span>/ noche</span></div>
+      </div>
+    </div>
+    <div class="servicio-card reveal">
+      <div class="s-img"><img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&auto=format&fit=crop&crop=top" alt="Entrenamiento"></div>
+      <div class="s-body">
+        <div class="s-title">Entrenamiento</div>
+        <p class="s-desc">Clases individuales o grupales para obediencia básica, socialización y trucos avanzados con método positivo.</p>
+        <div class="s-price">Desde $60 <span>/ clase</span></div>
+      </div>
+    </div>
+    <div class="servicio-card reveal">
+      <div class="s-img"><img src="https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=600&auto=format&fit=crop" alt="Veterinaria"></div>
+      <div class="s-body">
+        <div class="s-title">Consulta Veterinaria</div>
+        <p class="s-desc">Chequeo general, vacunas, desparasitación y atención de urgencias con veterinarios especializados en caninos.</p>
+        <div class="s-price">Desde $35 <span>/ consulta</span></div>
+      </div>
+    </div>
+    <div class="servicio-card reveal">
+      <div class="s-img"><img src="https://images.unsplash.com/photo-1612499893690-5e28e78fc1af?w=600&auto=format&fit=crop" alt="Reproducción"></div>
+      <div class="s-body">
+        <div class="s-title">Reproducción Selectiva</div>
+        <p class="s-desc">Programas de cruce con estudio genético para obtener ejemplares saludables, temperamentales y con pedigrí.</p>
+        <div class="s-price">Consultar <span>precio</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE NOSOTROS -->
+<section class="about" id="nosotros">
+  <div class="about-bg-overlay"></div>
+  <div style="position:relative;z-index:1;">
+    <div class="section-tag about-section-tag">Sobre Nosotros</div>
+    <h2 class="section-title">Más que un criadero,<br><em>una familia</em></h2>
+    <p class="about-text">Somos María y Carlos, apasionados de los perros desde siempre. Comenzamos en 2010 con nuestros primeros beagles — entre ellos la abuela de Chispas — y hoy somos uno de los criaderos más reconocidos.</p>
+    <p class="about-text">Cada cachorro que sale de nuestras manos ha recibido el mejor cuidado, amor y atención médica. No somos una fábrica: cada camada es especial.</p>
+    <ul class="about-list">
+      <li>Criadero registrado y certificado por KENNEL CLUB</li>
+      <li>Atención personalizada en todo el proceso</li>
+      <li>Red de veterinarios colaboradores de confianza</li>
+      <li>Seguimiento post-adopción de por vida</li>
+      <li>Grupos de WhatsApp con dueños de cada raza</li>
+    </ul>
+    <a href="#contacto" class="btn-primary" style="background:var(--amber-light);">Conócenos mejor →</a>
+  </div>
+  <div class="about-photo-grid reveal" style="position:relative;z-index:1;">
+    <img src="https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=800&auto=format&fit=crop" alt="Criadero">
+    <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=500&auto=format&fit=crop" alt="Perros jugando">
+    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=500&auto=format&fit=crop" alt="Cachorro feliz">
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testimonios" id="testimonios">
+  <div class="section-header reveal">
+    <div class="section-tag">Opiniones</div>
+    <h2 class="section-title">Lo que dicen nuestras <em>familias</em></h2>
+  </div>
+  <div class="test-grid">
+    <div class="test-card reveal">
+      <p class="test-text">Adoptamos a Luna gracias a la recomendación de Chispas 😂. El proceso fue transparente y la perrita llegó perfectamente sana. ¡Totalmente recomendados!</p>
+      <div class="test-footer">
+        <div class="test-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&crop=face" alt="Andrea"></div>
+        <div><div class="stars">★★★★★</div><div class="test-name">Andrea M.</div><div class="test-role">Mamá de Luna, Beagle</div></div>
+      </div>
+    </div>
+    <div class="test-card reveal">
+      <p class="test-text">Carlos nos explicó todo sobre la raza y nos mandó fotos semanales del cachorro antes de ir a buscarlo. La mejor experiencia de adopción que hemos tenido.</p>
+      <div class="test-footer">
+        <div class="test-avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&crop=face" alt="Roberto"></div>
+        <div><div class="stars">★★★★★</div><div class="test-name">Roberto S.</div><div class="test-role">Papá de Nugget, Golden</div></div>
+      </div>
+    </div>
+    <div class="test-card reveal">
+      <p class="test-text">Mi Labrador siempre sale feliz de la peluquería. Y Chispas siempre está en la puerta moviendo el rabo para recibirlo. Un lugar con mucho amor. 🐾</p>
+      <div class="test-footer">
+        <div class="test-avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&crop=face" alt="Valeria"></div>
+        <div><div class="stars">★★★★★</div><div class="test-name">Valeria C.</div><div class="test-role">Dueña de Coco, Labrador</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contacto" id="contacto">
+  <div class="reveal">
+    <div class="section-tag">Contacto</div>
+    <h2 class="contact-info-title">¿Listo para conocer a Chispas y sus amigos?</h2>
+    <p class="contact-info-desc">Escríbenos para agendar una visita, resolver tus dudas o simplemente conocer más sobre nuestras razas.</p>
+    <div class="contact-items">
+      <div class="contact-item"><div class="ci-icon">📍</div><div><div class="ci-label">Dirección</div><div class="ci-value">Calle Las Flores 234, Zona Norte</div></div></div>
+      <div class="contact-item"><div class="ci-icon">📞</div><div><div class="ci-label">Teléfono</div><div class="ci-value">+1 (555) 234-5678</div></div></div>
+      <div class="contact-item"><div class="ci-icon">📧</div><div><div class="ci-label">Email</div><div class="ci-value">hola@beagleworld.com</div></div></div>
+      <div class="contact-item"><div class="ci-icon">🕐</div><div><div class="ci-label">Horario</div><div class="ci-value">Lun–Sáb: 9am–7pm · Dom: 10am–4pm</div></div></div>
+    </div>
+  </div>
+  <div class="form-wrap reveal">
+    <div class="form-title">Escríbenos — Chispas espera conocerte 🐾</div>
+    <form id="contactForm">
+      <div class="form-row">
+        <div class="form-group"><label>Nombre</label><input type="text" placeholder="Tu nombre" required></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="tu@email.com" required></div>
+      </div>
+      <div class="form-group"><label>Teléfono</label><input type="tel" placeholder="+1 555 000 0000"></div>
+      <div class="form-group">
+        <label>Raza de interés</label>
+        <select>
+          <option value="">Selecciona una raza…</option>
+          <option>Beagle (como Chispas ⭐)</option>
+          <option>Labrador Retriever</option>
+          <option>Golden Retriever</option>
+          <option>Dálmata</option>
+          <option>Bulldog Inglés</option>
+          <option>Border Collie</option>
+          <option>Otro servicio</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Mensaje</label><textarea placeholder="Cuéntanos más sobre lo que buscas…"></textarea></div>
+      <button type="submit" class="btn-primary form-submit">Enviar Mensaje 🐕</button>
+    </form>
+    <div class="form-success" id="formSuccess">
+      <span class="success-icon">🐶</span>
+      ¡Mensaje enviado!<br>Chispas ya está moviendo el rabo de emoción.<br>Te contactaremos muy pronto.
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="#inicio" class="logo" style="text-decoration:none;margin-bottom:0.5rem;">
+        <div class="logo-icon"><img src="https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=80&auto=format&fit=crop" alt="logo"></div>
+        <div class="logo-text">Beagle<span>World</span></div>
+      </a>
+      <p class="footer-desc">Criamos con amor, entregamos con felicidad. Chispas y sus amigos esperan conocerte.</p>
+      <div class="social-links">
+        <a href="#" class="social-link">📘</a>
+        <a href="#" class="social-link">📸</a>
+        <a href="#" class="social-link">🐦</a>
+        <a href="#" class="social-link">💬</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Razas</h4>
+      <ul>
+        <li><a href="#razas">Beagle (Chispas ⭐)</a></li>
+        <li><a href="#razas">Labrador</a></li>
+        <li><a href="#razas">Golden Retriever</a></li>
+        <li><a href="#razas">Dálmata</a></li>
+        <li><a href="#razas">Bulldog Inglés</a></li>
+        <li><a href="#razas">Border Collie</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Servicios</h4>
+      <ul>
+        <li><a href="#servicios">Adopción</a></li>
+        <li><a href="#servicios">Peluquería</a></li>
+        <li><a href="#servicios">Guardería</a></li>
+        <li><a href="#servicios">Entrenamiento</a></li>
+        <li><a href="#servicios">Veterinaria</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <ul>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#chispas">⭐ Chispas</a></li>
+        <li><a href="#testimonios">Opiniones</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+        <li><a href="#">Privacidad</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 BeagleWorld. Todos los derechos reservados.</span>
+    <span>Hecho con ❤️ para los amantes de los perros — y de <strong style="color:var(--amber-light)">Chispas</strong></span>
+  </div>
+</footer>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  const header = document.getElementById('header');
+  const scrollTopBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 50);
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 300);
+  });
+
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  function closeMobileNav() {
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+  }
+  document.addEventListener('click', (e) => {
+    if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) closeMobileNav();
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const delay = parseInt(entry.target.dataset.delay || 0);
+        setTimeout(() => entry.target.classList.add('visible'), delay);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.dataset.delay = (i % 4) * 100;
+    observer.observe(el);
+  });
+
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.form-submit');
+    btn.textContent = 'Enviando… 🐾';
+    btn.disabled = true;
+    setTimeout(() => {
+      this.style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    }, 1200);
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href.length > 1) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
